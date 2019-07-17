@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <mitopayment>
+                <model>MitoPaymentFacade</model>
+                <active>0</active>
+                <title>MitoPayment</title>
+                <payment_action>order</payment_action>
+                <can_order>1</can_order>
+                <currency>USD</currency>
+                <specificcountry></specificcountry>
+                <order_status>pending_mito_payment</order_status>
+                <sort_order>100</sort_order>
+                <min_order_total>600</min_order_total>
+                <can_use_checkout>0</can_use_checkout>
+            </mitopayment>
+        </payment>
+    </default>
+</config>

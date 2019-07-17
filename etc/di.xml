@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+<!--   MitoPaymentFacade:: process payment actions between Magento Sales Management and payment processor.-->
+    <virtualType name="MitoPaymentFacade" type="Magento\Payment\Model\Method\Adapter">
+                <arguments>
+<!--                    Code of payment -->
+                     <argument name="code" xsi:type="const">Magenest\MitoPayment\Model\Ui\MitoConfigProvider::CODE</argument>
+<!--                    ??? responsible for payment provider gateway form rendering -->
+                    <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+<!--                    Render payment info of order in admin-->
+                    <argument name="infoBlockType" xsi:type="string">Magenest\MitoPayment\Block\Info</argument>
+<!--                    This pool enables you to set payment configuration that is based on certain conditions-->
+                    <argument name="valueHandlerPool" xsi:type="object">MitoPaymentValueHandlerPool</argument>
+
+                    <argument name="validatorPool" xsi:type="object">MitoPaymentValidatorPool</argument>
+
+                    <argument name="commandPool" xsi:type="object">MitoPaymentCommandPool</argument>
+                </arguments>
+    </virtualType>
+    <!--Handler pool-->
+    <virtualType name="MitoPaymentValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+<!--             You must always specify the default handler-->
+                <item name="default" xsi:type="string">MitoPaymentConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="MitoPaymentConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">MitoPaymentConfig</argument>
+        </arguments>
+    </virtualType>
+    <!-- Handler pool-->
+    <!-- Config -->
+    <!-- Can use default or create new config class which extends default-->
+    <virtualType name="MitoPaymentConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="string">Magenest\MitoPayment\Model\Ui\MitoConfigProvider::CODE</argument>
+        </arguments>
+    </virtualType>
+    <!-- Config -->
+    <virtualType name="MitoPaymentValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">Magenest\MitoPayment\Gateway\Validator\CountryValidator</item>
+                <item name="currency" xsi:type="string">Magenest\MitoPayment\Gateway\Validator\CurrencyValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+</config>
