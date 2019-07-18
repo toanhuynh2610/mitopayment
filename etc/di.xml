@@ -36,16 +36,81 @@
     <!-- Can use default or create new config class which extends default-->
     <virtualType name="MitoPaymentConfig" type="Magento\Payment\Gateway\Config\Config">
         <arguments>
-            <argument name="methodCode" xsi:type="string">Magenest\MitoPayment\Model\Ui\MitoConfigProvider::CODE</argument>
+            <argument name="methodCode" xsi:type="const">Magenest\MitoPayment\Model\Ui\MitoConfigProvider::CODE</argument>
         </arguments>
     </virtualType>
     <!-- Config -->
     <virtualType name="MitoPaymentValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
         <arguments>
             <argument name="validators" xsi:type="array">
-                <item name="country" xsi:type="string">Magenest\MitoPayment\Gateway\Validator\CountryValidator</item>
-                <item name="currency" xsi:type="string">Magenest\MitoPayment\Gateway\Validator\CurrencyValidator</item>
+                <item name="country" xsi:type="string">MitoPaymentCountryValidator</item>
             </argument>
         </arguments>
     </virtualType>
+<!--    Validator-->
+    <virtualType name="MitoPaymentCountryValidator" type="Magenest\MitoPayment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">MitoPaymentConfig</argument>
+        </arguments>
+    </virtualType>
+<!--    List command for payment-->
+    <virtualType name="MitoPaymentCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+<!--                You can create new commands???-->
+                <item name="order" xsi:type="string">MitoPaymentOrderCommand</item>
+<!--                Use Nullcommand-->
+                <item name="capture" xsi:type="string">Magento\Payment\Gateway\Command\NullCommand</item>
+                <item name="authorize" xsi:type="string">SamplePaymentGatewayAuthorizeCommand</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Magenest\MitoPayment\Block\Info">
+        <arguments>
+            <argument name="config" xsi:type="object">MitoPaymentConfig</argument>
+        </arguments>
+    </type>
+    <virtualType name="MitoPaymentOrderCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+<!--            Send Data-->
+            <argument name="requestBuilder" xsi:type="object">MitoPaymentOrderRequest</argument>
+<!--            Transfer Data-->
+            <argument name="transferFactory" xsi:type="object">Magenest\MitoPayment\Gateway\Http\TransferFactory</argument>
+            <argument name="handler" xsi:type="object">MitoPaymentOrderHandlerComposite</argument>
+            <argument name="client" xsi:type="object">Magenest\MitoPayment\Gateway\Http\Client\Order</argument>
+        </arguments>
+    </virtualType>
+<!--    Data for request-->
+    <virtualType name="MitoPaymentOrderRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="data" xsi:type="string">Magenest\MitoPayment\Gateway\Request\OrderRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="MitoPaymentOrderHandlerComposite" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments >
+            <argument name="handlers" xsi:type="array">
+                <item name="order" xsi:type="string">Magenest\MitoPayment\Gateway\Response\Order</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!--Logger-->
+    <type name="Magenest\MitoPayment\Helper\Logger\Handler">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+
+    <type name="Magenest\MitoPayment\Helper\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">MitoPayment Logger</argument>
+            <argument name="handlers" xsi:type="array">
+                <item name="system" xsi:type="object">Magenest\MitoPayment\Helper\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

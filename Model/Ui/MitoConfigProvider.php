@@ -12,7 +12,7 @@ use Magento\Payment\Gateway\ConfigInterface;
  */
 class MitoConfigProvider implements ConfigProviderInterface
 {
-    const CODE = 'mitopay';
+    const CODE = 'mito_payment';
     protected $config;
     public function __construct(
         ConfigInterFace $config
